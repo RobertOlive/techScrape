@@ -1,10 +1,18 @@
 // Grab the articles as a json
+const colors = [
+  "is-primary",
+  "is-info",
+  "is-success"
+]
+function getArticles (articles) {
+  for (var i = 0; i < articles.length; i++) {
+    // Display the apropos information on the page
+      $("#articles").append("<article class = 'tile is-child notification "+colors[0]+"' ><p data-id='" + articles[i]._id + "'>" + articles[i].headline + "<br />" + articles[i].link + "</p></article>");
+  }
+}
 $.getJSON("/articles", function(data) {
     // For each one
-    for (var i = 0; i < data.length; i++) {
-      // Display the apropos information on the page
-      $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].headline + "<br />" + data[i].link + "</p>");
-    }
+    getArticles(data);
   });
   
   
@@ -23,19 +31,13 @@ $.getJSON("/articles", function(data) {
       // With that done, add the comment information to the page
       .then(function(data) {
         console.log(data);
-        // The headline of the article
-        $("#comments").append("<h2>" + data.headline + "</h2>");
-        // An input to enter a new headline
-        $("#comments").append("<input id='headlineinput' name='headline' >");
         // A textarea to add a new comment body
         $("#comments").append("<textarea id='bodyinput' name='body'></textarea>");
         // A button to submit a new comment, with the id of the article saved to it
-        $("#comments").append("<button data-id='" + data._id + "' id='savecomment'>Save comment</button>");
+        $("#comments").append("<button data-id='" + data._id + "' id='savecomment'>Save comment</button></div>");
   
         // If there's a comment in the article
         if (data.comment) {
-          // Place the headline of the comment in the headline input
-          $("#headlineinput").val(data.comment.headline);
           // Place the body of the comment in the body textarea
           $("#bodyinput").val(data.comment.body);
         }
@@ -67,6 +69,12 @@ $.getJSON("/articles", function(data) {
       });
   
     // Also, remove the values entered in the input and textarea for comment entry
-    $("#headlineinput").val("");
     $("#bodyinput").val("");
   });
+
+  $(document).on("click", ".scrape", function() {
+    $.ajax({
+      method: "GET",
+      url: "/scrape"
+    }).then(getArticles(data))
+  })
